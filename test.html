@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Sharing App</title>
+</head>
+<style>
+    body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    
+}
+
+header {
+    background: #333;
+    color: rebeccapurple;
+    padding: 15px;
+}
+
+nav a {
+    color: gray;
+    text-decoration: none;
+    margin: 0 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    margin: 30px auto;
+}
+
+input, textarea, button {
+    margin-top: 10px;
+    padding: 8px;
+}
+
+#recipe-list {
+    margin-top: 40px;
+}
+
+.recipe-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin: 10px auto;
+    width: 300px;
+}
+#recipes{
+    position: absolute;
+    left: 0;
+}
+</style>
+<body>
+
+    <header>
+        <h1>Recipe Sharing App</h1>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Add Recipe</a>
+            <a href="#">View Recipes</a>
+        </nav>
+    </header>
+
+    <section id="add-recipe">
+        <h2>Add a Recipe</h2>
+        <form id="recipe-form">
+            <label for="recipe-name">Recipe Name :</label>
+            <input type="text" id="recipe-name" required>
+
+            <label for="recipe-ingredients">Ingredients :</label>
+            <textarea id="recipe-ingredients" required></textarea>
+
+            <button type="submit"><b>Add Recipe </b></button>
+        </form>
+    </section>
+
+    <section id="recipes">
+        <h2>Recipes</h2>
+        <div id="recipe-list"></div>
+    </section>
+
+</body>
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const recipeForm = document.getElementById("recipe-form");
+    const recipeList = document.getElementById("recipe-list");
+
+    
+    const recipes = JSON.parse(localStorage.getItem("recipes")) || [];
+
+    function displayRecipes() {
+        recipeList.innerHTML = "";
+        recipes.forEach((recipe, index) => {
+            const recipeCard = document.createElement("div");
+            recipeCard.classList.add("recipe-card");
+            recipeCard.innerHTML = `
+                <h3>${recipe.name}</h3>
+                <p><strong>Ingredients:</strong></p>
+                <p>${recipe.ingredients}</p>
+                <button onclick="deleteRecipe(${index})">Delete</button>
+            `;
+            recipeList.appendChild(recipeCard);
+        });
+    }
+
+    recipeForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("recipe-name").value;
+        const ingredients = document.getElementById("recipe-ingredients").value;
+
+        const newRecipe = { name, ingredients };
+        recipes.push(newRecipe);
+        localStorage.setItem("recipes", JSON.stringify(recipes));
+
+        displayRecipes();
+        recipeForm.reset();
+    });
+
+    window.deleteRecipe = function (index) {
+        recipes.splice(index, 1);
+        localStorage.setItem("recipes", JSON.stringify(recipes));
+        displayRecipes();
+    };
+
+    displayRecipes();
+});
+</script>
